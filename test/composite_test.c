@@ -29,21 +29,23 @@ int main(int argc, char **argv)
     trap.bot.r = pixman_double_to_fixed(1.5 * SCALE);
     trap.bot.y = pixman_double_to_fixed(1.5 * SCALE);
 
-    pixman_image_t *src_img;
-    pixman_color_t red = {0xffff, 0x0000, 0x0000, 0xffff};
-    src_img = pixman_image_create_solid_fill(&red);
-
+    /*8bpp*/
     pixman_image_t *mask_img;
     uint32_t *mbits = (uint32_t *)malloc(WIDTH * HEIGHT);
-    memset(mbits, 0, WIDTH * HEIGHT);
-    mask_img = pixman_image_create_bits(PIXMAN_a1, WIDTH, HEIGHT, mbits, WIDTH);
+    memset(mbits, 0, WIDTH * HEIGHT); // black
+    mask_img = pixman_image_create_bits(PIXMAN_a8, WIDTH, HEIGHT, mbits, WIDTH); // width
+
+    // set mask
+    pixman_add_traps(mask_img, 0, 0, 1, &trap);
+
+    pixman_image_t *src_img;
+    pixman_color_t red = {0xffff, 0x0000, 0x0000, 0xffff}; // 2Bytes
+    src_img = pixman_image_create_solid_fill(&red);
 
     pixman_image_t *dest_img;
     uint32_t *bits = (uint32_t *)malloc(WIDTH * HEIGHT * 4);
-    memset(bits, 0xff, WIDTH * HEIGHT * 4);
-    dest_img = pixman_image_create_bits(PIXMAN_a8r8g8b8, WIDTH, HEIGHT, bits, WIDTH * 4);
-
-    pixman_add_traps(mask_img, 0, 0, 1, &trap);
+    memset(bits, 0xff, WIDTH * HEIGHT * 4); // white
+    dest_img = pixman_image_create_bits(PIXMAN_a8r8g8b8 /*4Bytes*/, WIDTH, HEIGHT, bits, WIDTH * 4); // width*4
 
     pixman_image_composite(PIXMAN_OP_OVER, src_img, mask_img, dest_img, 0, 0, 0, 0, 0, 0, WIDTH, HEIGHT);
 
