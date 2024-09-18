@@ -15,6 +15,7 @@ BUILDDIR = build
 
 # Source files
 SRC_FILES = $(SRCDIR)/sdl_manager.c
+SRC_FILES += $(SRCDIR)/utility.c
 TEST_FILES = $(TESTDIR)/composite_test.c
 
 # Object files

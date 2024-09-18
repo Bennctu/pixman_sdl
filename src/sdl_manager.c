@@ -9,8 +9,18 @@ struct _SDLWindow {
     const char *title;
 };
 
+static void _SDLWindow_update_texture(SDLWindow *sdl_window, void *pixels)
+{
+    SDL_UpdateTexture(sdl_window->texture, NULL, pixels, sdl_window->width * 4);
+    SDL_RenderClear(sdl_window->renderer);
+    SDL_RenderCopy(sdl_window->renderer, sdl_window->texture, NULL, NULL);
+    SDL_RenderPresent(sdl_window->renderer);
+}
 
-SDLWindow *SDLWindow_create(const char *title, int width, int height)
+SDLWindow *SDLWindow_create(const char *title,
+                            int width,
+                            int height,
+                            void *data)
 {
     SDLWindow *sdl_window = (SDLWindow *) malloc(sizeof(SDLWindow));
     sdl_window->title = title;
@@ -50,15 +60,9 @@ SDLWindow *SDLWindow_create(const char *title, int width, int height)
         return NULL;
     }
 
-    return sdl_window;
-}
+    _SDLWindow_update_texture(sdl_window, data);
 
-void SDLWindow_update_texture(SDLWindow *sdl_window, void *pixels)
-{
-    SDL_UpdateTexture(sdl_window->texture, NULL, pixels, sdl_window->width * 4);
-    SDL_RenderClear(sdl_window->renderer);
-    SDL_RenderCopy(sdl_window->renderer, sdl_window->texture, NULL, NULL);
-    SDL_RenderPresent(sdl_window->renderer);
+    return sdl_window;
 }
 
 void SDLWindow_destroy(SDLWindow *sdl_window)
