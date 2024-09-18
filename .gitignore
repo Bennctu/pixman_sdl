@@ -3,3 +3,6 @@
 
 # generate
 *_test
+
+# build
+build/*
